@@ -1,33 +1,38 @@
 import sys
 import random
-from PyQt6 import uic
 from PyQt6.QtGui import QColor, QPainter, QBrush
-from PyQt6.QtWidgets import QApplication, QMainWindow
+from PyQt6.QtWidgets import QApplication, QMainWindow, QPushButton
 
 
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        uic.loadUi('UI.ui', self)  # Загружаем UI из файла
-        self.pushButton.clicked.connect(self.on_click)  # Подключаем обработчик нажатия кнопки
 
-        self.circles = []  # Список для хранения окружностей
+        self.setWindowTitle("Рандомные шарики")
+        self.setGeometry(100, 100, 800, 600)
+
+        self.pushButton = QPushButton("Добавить шарик", self)
+        self.pushButton.setGeometry(350, 20, 100, 40)
+        self.pushButton.clicked.connect(self.on_click)
+
+        self.circles = []
 
     def on_click(self):
-        # Генерация случайных данных для окружности
         diameter = random.randint(20, 100)
         x = random.randint(0, self.width() - diameter)
         y = random.randint(0, self.height() - diameter)
-        self.circles.append((x, y, diameter))
-        self.update()  # Перерисовываем окно
+
+        color = QColor(random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
+
+        self.circles.append((x, y, diameter, color))
+        self.update()
 
     def paintEvent(self, event):
         painter = QPainter(self)
         painter.setRenderHint(QPainter.RenderHint.Antialiasing)
 
-        # Рисуем каждую окружность
-        for (x, y, diameter) in self.circles:
-            painter.setBrush(QBrush(QColor(255, 255, 0)))  # Желтый цвет
+        for (x, y, diameter, color) in self.circles:
+            painter.setBrush(QBrush(color))
             painter.drawEllipse(x, y, diameter, diameter)
 
         painter.end()
